@@ -31,15 +31,15 @@ public class XoolibeutExtractContentPDF {
 			// "COURBEVOIE");
 			// generateCSVFromPDFTypeOperation(compte_fg, "ALIE_EXPRESS",false, null,
 			// "LONDON", "LUXEMBOURG");
-			String[] libelleNot = { ExtractDebit.IDENTIFICATION_ENVOIE_WESTERN_UNION_COURBEVOIE,
-					ExtractDebit.IDENTIFICATION_COMMERCE_LONDON, ExtractDebit.IDENTIFICATION_COMMERCE_LUXEMBOURG,
-					ExtractDebit.IDENTIFICATION_SANTE_MEDECIN_FARCY_CORRINE };
+			String[] libelleNot = { "COURBEVOIE",
+					"LONDON", "LUXEMBOURG",
+					"CORRINE" };
 			generateCSVFromPDFTypeOperation(compte_rg, "ONE", false, libelleNot, ExtractDebit.PAIEMENT,
 					ExtractDebit.PRLV, ExtractDebit.VIR_SEPA);
 			generateCSVFromPDFTypeOperation(compte_fg, "ONE", false, libelleNot, ExtractDebit.PAIEMENT,
 					ExtractDebit.PRLV, ExtractDebit.VIR_SEPA);
 			String[] libelleIn = { "CARREFOUR" };
-			generateCSVFromPDFTypeOperation(compte_rg, ExtractDebit.IDENTIFICATION_COURSE_CARREFOUR, true, libelleIn, ExtractDebit.PAIEMENT,
+			generateCSVFromPDFTypeOperation(compte_rg, ExtractDebit.IDENTIFICATION_CB_COURSE_CARREFOUR, true, libelleIn, ExtractDebit.PAIEMENT,
 					ExtractDebit.PRLV, ExtractDebit.VIR_SEPA);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -161,7 +161,7 @@ public class XoolibeutExtractContentPDF {
 		String startDate = "";
 		String endDate = "";
 		boolean isFirstLine = true;
-		XoolibeutFormatExcel xoolibeutFormatExcel = new XoolibeutFormatExcel();
+		XoolibeutFeuilleExcel xoolibeutFormatExcel = new XoolibeutFeuilleExcel();
 		List<XoolibeutLine> xoolibeutLines = new ArrayList<XoolibeutLine>();
 		xoolibeutFormatExcel.setLines(xoolibeutLines);
 		File[] files = fileFolder.listFiles();
