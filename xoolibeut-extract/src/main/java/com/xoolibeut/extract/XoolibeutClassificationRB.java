@@ -39,6 +39,10 @@ public class XoolibeutClassificationRB {
 					ExtractDebit.VIR_SEPA, ExtractDebit.IDENTIFICATION_ASSURANCE_TRANSPORT_HABITAT,
 					ExtractDebit.IDENTIFICATION_ASSURANCE_TRANSPORT_PLANS_PREV,
 					ExtractDebit.IDENTIFICATION_RETRAIT_DIVERS_RETRAIT, ExtractDebit.IDENTIFICATION_SPORT_CHEQUE);
+			generateCSVFromPDFTypeOperation(compte_fg, "out", ExtractDebit.PAIEMENT, ExtractDebit.PRLV,
+					ExtractDebit.VIR_SEPA, ExtractDebit.IDENTIFICATION_ASSURANCE_TRANSPORT_HABITAT,
+					ExtractDebit.IDENTIFICATION_ASSURANCE_TRANSPORT_PLANS_PREV,
+					ExtractDebit.IDENTIFICATION_RETRAIT_DIVERS_RETRAIT, ExtractDebit.IDENTIFICATION_SPORT_CHEQUE);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -63,11 +67,10 @@ public class XoolibeutClassificationRB {
 		for (File file : files) {
 			if (file.isFile()) {
 				Date startDateFile = null;
-				boolean isFirstLineFile = true;
 				XoolibeutFeuilleExcel xoolibeutFormatExcel = new XoolibeutFeuilleExcel();
 				List<XoolibeutLine> xoolibeutLines = new ArrayList<XoolibeutLine>();
 				xoolibeutFormatExcel.setLines(xoolibeutLines);
-				xoolibeutClasseurExcel.getFeuilleExcels().add(xoolibeutFormatExcel);
+
 				PdfReader reader = new PdfReader(file.getAbsolutePath());
 				int pages = reader.getNumberOfPages();
 				System.out.println("Extracted content of PDF---- ");
@@ -83,7 +86,8 @@ public class XoolibeutClassificationRB {
 						for (String operation : typeOperation) {
 							if (lines[k].contains(operation)) {
 								if (!operation.equals(ExtractDebit.IDENTIFICATION_RETRAIT_DIVERS_RETRAIT)
-										|| (!lines[k].contains(ExtractDebit.MOT_EXCLU_RETRAITE) &&!lines[k].startsWith(ExtractDebit.IDENTIFICATION_RETRAIT_DIVERS_RETRAIT))) {
+										|| (!lines[k].contains(ExtractDebit.MOT_EXCLU_RETRAITE) && !lines[k]
+												.startsWith(ExtractDebit.IDENTIFICATION_RETRAIT_DIVERS_RETRAIT))) {
 									if (!operation.equals(ExtractDebit.VIR_SEPA)
 											|| !lines[k].contains(ExtractDebit.MOT_EXCLU_VIR_SEPA_GAYE)) {
 										verifLine = true;
@@ -129,10 +133,15 @@ public class XoolibeutClassificationRB {
 							if (isFirstLine) {
 								isFirstLine = false;
 							}
-							if (isFirstLineFile) {
+
+							if (startDateFile != null) {
+								if (startDateFile.compareTo(buildDate(arrayLine[0])) > 0) {
+									startDateFile = buildDate(arrayLine[0]);
+								}
+							} else {
 								startDateFile = buildDate(arrayLine[0]);
-								isFirstLineFile = false;
 							}
+
 							if (startDate != null) {
 								if (startDate.compareTo(buildDate(arrayLine[0])) > 0) {
 									startDate = buildDate(arrayLine[0]);
@@ -186,16 +195,19 @@ public class XoolibeutClassificationRB {
 					// System.out.println(contentOfPage);
 				}
 				reader.close();
-				xoolibeutFormatExcel.setName(buildNameByStartDate(startDateFile) + "_" + buildNameByEndDate(endDate));
-				xoolibeutFormatExcel.setStartDate(startDateFile);
-				xoolibeutFormatExcel.setEndDate(endDate);
-				Collections.sort(xoolibeutFormatExcel.getLines(), new Comparator<XoolibeutLine>() {
-					@Override
-					public int compare(XoolibeutLine o1, XoolibeutLine o2) {
-						return o1.getColumnF().compareTo(o2.getColumnF());
+				if (!xoolibeutLines.isEmpty()) {
+					xoolibeutClasseurExcel.getFeuilleExcels().add(xoolibeutFormatExcel);
+					xoolibeutFormatExcel.setName(buildFileNameMonthYear(startDateFile));
+					xoolibeutFormatExcel.setStartDate(startDateFile);
+					xoolibeutFormatExcel.setEndDate(endDate);
+					Collections.sort(xoolibeutFormatExcel.getLines(), new Comparator<XoolibeutLine>() {
+						@Override
+						public int compare(XoolibeutLine o1, XoolibeutLine o2) {
+							return o1.getColumnF().compareTo(o2.getColumnF());
 
-					}
-				});
+						}
+					});
+				}
 			}
 		}
 
@@ -230,14 +242,11 @@ public class XoolibeutClassificationRB {
 		}
 	}
 
-	
-
-	private static String buildNameByStartDate(Date dateSt) throws ParseException {
+	private static String buildFileNameMonthYear(Date dateSt) throws ParseException {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(dateSt);
 		String month = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
-		System.out.println(month);
-		return calendar.get(Calendar.DAY_OF_MONTH) + "_" + month;
+		return month + "_" + calendar.get(Calendar.YEAR);
 	}
 
 	private static String buildNameByEndDate(Date dateSt) throws ParseException {
