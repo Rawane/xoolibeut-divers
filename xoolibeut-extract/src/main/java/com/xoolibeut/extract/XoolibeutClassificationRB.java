@@ -125,12 +125,14 @@ public class XoolibeutClassificationRB {
 								verifLine = false;
 							}
 						}
+						String complementAchat="";
 						if (verifLine) {
 							switch (currentOperationMatch) {
 							case ExtractDebit.PAIEMENT: {
 								classification = ExtractDebit.NATURE_DEPENSE_DIVERS;
 								if (k + 1 < lines.length) {
 									classification = determineClassicationModePaiementCB(lines[k + 1]);
+									complementAchat=" "+lines[k + 1];
 								}
 								break;
 							}
@@ -192,7 +194,7 @@ public class XoolibeutClassificationRB {
 								for (int j = 3; j < arrayLine.length - 1; j++) {
 									elt3 = elt3 + " " + arrayLine[j];
 								}
-								listeElement.add(elt3);
+								listeElement.add(elt3+complementAchat);
 								String lastElement = arrayLine[arrayLine.length - 1];
 								listeElement.add(lastElement.replaceAll("\\.", "").replace(",", "."));
 								listeElement.add(classification);
