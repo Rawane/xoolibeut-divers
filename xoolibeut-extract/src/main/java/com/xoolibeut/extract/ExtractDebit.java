@@ -6,10 +6,11 @@ public class ExtractDebit {
 	public final static String PRLV = "PRLV";
 	public final static String VIR = "VIR";
 	public final static String VIR_SEPA = "VIR SEPA";
-	//MOT EXCLU
+	// MOT EXCLU
 	public final static String MOT_EXCLU_RETRAITE = "RETRAITE";
+	public final static String MOT_EXCLU_REMBOURSEMENT = "REMBOURSEMENT";
 	public final static String MOT_EXCLU_VIR_SEPA_GAYE = "GAYE";
-	
+
 //Identififier le type achat
 	public final static String IDENTIFICATION_CB_COURSE_CARREFOUR = "CARREFOUR";
 	public final static String IDENTIFICATION_CB_COURSE_MAGASIN_U = "MAGASIN U";
@@ -28,12 +29,13 @@ public class ExtractDebit {
 	public final static String IDENTIFICATION_CB_DIVERS_AMAZON = "AMAZON";
 	public final static String IDENTIFICATION_RETRAIT_DIVERS_RETRAIT = "RETRAIT";
 	public final static String IDENTIFICATION_CB_DIVERS_CASTORAMA = "CASTORAMA";
-	
+
 	public final static String IDENTIFICATION_VIR_SEPA_ENERGIE_PAIE_EAU = "PAIE EAU";
 	public final static String IDENTIFICATION_PRLV_ENERGIE_TOTALENERGIES = "TOTALENERGIES";
+	public final static String IDENTIFICATION_PRLV_ENERGIE_TRES_NANTES_MUNICIP = "TRES. NANTES MUNICIP";
 	public final static String IDENTIFICATION_PRLV_ENERGIE_ENGIE = "ENGIE";
 	public final static String IDENTIFICATION_PRLV_ENERGIE_ENGIE_HOME = "ENGIE HOME";
-	
+
 	public final static String IDENTIFICATION_CB_ASSURANCE_TRANSPORT_CARTER_CASH = "CARTER-CASH";
 	public final static String IDENTIFICATION_ASSURANCE_TRANSPORT_PLANS_PREV = "PLANS PREV.";
 	public final static String IDENTIFICATION_ASSURANCE_TRANSPORT_HABITAT = "HABITAT";
@@ -47,7 +49,6 @@ public class ExtractDebit {
 	public final static String IDENTIFICATION_PRLV_INTERNET_PRIXTEL = "PRIXTEL";
 	public final static String IDENTIFICATION_PRLV_INTERNET_EURO_INFORMATION = "EURO-INFORMATION";
 	public final static String IDENTIFICATION_PRLV_INTERNET_EI_TELECOM = "EI TELECOM";
-	
 
 	public final static String IDENTIFICATION_CB_CHARGE_COPRIETAIRES_CABINET_THIERRY = "CABINET THIERRY";
 	public final static String IDENTIFICATION_CB_SPORT_DECATHLON = "DECATHLON";
@@ -70,48 +71,47 @@ public class ExtractDebit {
 
 	public final static String IDENTIFICATION_CB_MODE_BEAUTE_SEPHORA = "SEPHORA";
 	public final static String IDENTIFICATION_VIR_SEPA_ASS_MAT = "ASS";
-	public final static String IDENTIFICATION_VIR_SEPA_ASS_MAT_PAIE = "PAIE";
+	public final static String IDENTIFICATION_VIR_SEPA_ASS_MAT_PAIE = "PAIE"; 
+	public final static String IDENTIFICATION_VIR_SEPA_ASS_MAT_QUEAU = "QUEAU";
 
 	public final static String IDENTIFICATION_PRLV_CANTINE_UNIQUE_TH = "UNIQUE TH";
 	public final static String IDENTIFICATION_PRLV_IMPOT_FINANCE_PUBLIQUE = "FINANCES PUBLIQUES";
 
-	//classer les achats
-	//DAT
+	// classer les achats
+	// DAT
 	public final static String NATURE_DEPENSE_ASSURANCE_TRANSPORT = "assurance et transport";
-	//DAM
+	// DAM
 	public final static String NATURE_DEPENSE_ASS_MAT = "Assistante Maternelle";
-	//DBO
+	// DBO
 	public final static String NATURE_DEPENSE_BOULANGERIE = "Boulangerie";
-	//DCA
+	// DCA
 	public final static String NATURE_DEPENSE_CANTINE = "cantine";
-	//DCC
+	// DCC
 	public final static String NATURE_DEPENSE_CHARGES_COPRO = "Charges corpopriétaires";
-	//DCO
-	public final static String NATURE_DEPENSE_COURSE = "Course";	
-	//DDI
-	public final static String NATURE_DEPENSE_DIVERS = "divers";	
-	//DEE
+	// DCO
+	public final static String NATURE_DEPENSE_COURSE = "Course";
+	// DDI
+	public final static String NATURE_DEPENSE_DIVERS = "divers";
+	// DEE
 	public final static String NATURE_DEPENSE_EAU_ELEC_GAZ = "Eau Electricité Gaz";
-	//exemple ali express et envoie western 
-	//DEX
+	// exemple ali express et envoie western
+	// DEX
 	public final static String NATURE_DEPENSE_EXTRA = "Extra";
-	//DIT
+	// DIT
 	public final static String NATURE_DEPENSE_INTERNET_TELEPHONIE = "internet et téléphonie";
-	//DIM
+	// DIM
 	public final static String NATURE_DEPENSE_IMPOT = "impôts";
-	//DMJ
+	// DMJ
 	public final static String NATURE_DEPENSE_MEUBLE_JARDIN = "meuble jardin";
-	//DPH
+	// DPH
 	public final static String NATURE_DEPENSE_PHARMACIE = "pharmacie";
-	//DRS
+	// DRS
 	public final static String NATURE_DEPENSE_RESTAU_SORTI = "restau et sortie";
-	//DSP
+	// DSP
 	public final static String NATURE_DEPENSE_SPORT = "sport";
-	//DSA
-	public final static String NATURE_DEPENSE_SANTE = "Santé";	
-	//DTA
+	// DSA
+	public final static String NATURE_DEPENSE_SANTE = "Santé";
+	// DTA
 	public final static String NATURE_DEPENSE_TABAC = "tabac presse";
 
-
-	
 }

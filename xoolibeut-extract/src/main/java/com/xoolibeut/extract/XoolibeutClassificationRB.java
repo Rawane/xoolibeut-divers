@@ -22,7 +22,6 @@ import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 public class XoolibeutClassificationRB {
 	private static final String compte_rg = "C:\\perso\\depenses\\compte_rawane";
 	private static final String compte_fg = "C:\\perso\\depenses\\compte_fatou";
-
 	public static void main(String[] args) {
 
 		try {
@@ -35,28 +34,48 @@ public class XoolibeutClassificationRB {
 			 * 
 			 * String[] libelleIn = { "CARREFOUR" };
 			 **/
-			generateCSVFromPDFTypeOperation(compte_rg, "out", ExtractDebit.PAIEMENT, ExtractDebit.PRLV,
-					ExtractDebit.VIR_SEPA, ExtractDebit.IDENTIFICATION_ASSURANCE_TRANSPORT_HABITAT,
-					ExtractDebit.IDENTIFICATION_ASSURANCE_TRANSPORT_PLANS_PREV,
-					ExtractDebit.IDENTIFICATION_RETRAIT_DIVERS_RETRAIT, ExtractDebit.IDENTIFICATION_SPORT_CHEQUE);
-			generateCSVFromPDFTypeOperation(compte_fg, "out", ExtractDebit.PAIEMENT, ExtractDebit.PRLV,
-					ExtractDebit.VIR_SEPA, ExtractDebit.IDENTIFICATION_ASSURANCE_TRANSPORT_HABITAT,
-					ExtractDebit.IDENTIFICATION_ASSURANCE_TRANSPORT_PLANS_PREV,
-					ExtractDebit.IDENTIFICATION_RETRAIT_DIVERS_RETRAIT, ExtractDebit.IDENTIFICATION_SPORT_CHEQUE);
+
+			File fileFolder = new File(compte_rg);
+			File[] files = fileFolder.listFiles();
+			for (File file : files) {
+				if (file.isDirectory()) {
+					generateCSVFromPDFTypeOperation(file.getAbsolutePath(), "depenses", ExtractDebit.PAIEMENT,
+							ExtractDebit.PRLV, ExtractDebit.VIR_SEPA,
+							ExtractDebit.IDENTIFICATION_ASSURANCE_TRANSPORT_HABITAT,
+							ExtractDebit.IDENTIFICATION_ASSURANCE_TRANSPORT_PLANS_PREV,
+							ExtractDebit.IDENTIFICATION_RETRAIT_DIVERS_RETRAIT,
+							ExtractDebit.IDENTIFICATION_SPORT_CHEQUE);
+				}
+			}
+
+			fileFolder = new File(compte_fg);
+			files = fileFolder.listFiles();
+			for (File file : files) {
+				if (file.isDirectory()) {
+					generateCSVFromPDFTypeOperation(file.getAbsolutePath(), "depenses", ExtractDebit.PAIEMENT,
+							ExtractDebit.PRLV, ExtractDebit.VIR_SEPA,
+							ExtractDebit.IDENTIFICATION_ASSURANCE_TRANSPORT_HABITAT,
+							ExtractDebit.IDENTIFICATION_ASSURANCE_TRANSPORT_PLANS_PREV,
+							ExtractDebit.IDENTIFICATION_RETRAIT_DIVERS_RETRAIT,
+							ExtractDebit.IDENTIFICATION_SPORT_CHEQUE);
+				}
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	public static void generateCSVFromPDFTypeOperation(String folder, String endFolder, String... typeOperation)
+	public static void generateCSVFromPDFTypeOperation(String folder, String destination, String... typeOperation)
 			throws IOException, ParseException {
+		System.out.println(folder);
 		File fileFolder = new File(folder);
-		File fileFolderDest = new File(folder + "_" + endFolder);
+		File fileFolderDest = new File(fileFolder.getParent() + File.separator + destination);
 		if (!fileFolderDest.exists()) {
 			fileFolderDest.mkdir();
 		}
-		String contentOut = "";
+		System.out.println(fileFolderDest.getAbsolutePath());
 		double total = 0.0;
 		Date startDate = null;
 		Date endDate = null;
@@ -65,7 +84,9 @@ public class XoolibeutClassificationRB {
 		xoolibeutClasseurExcel.setFeuilleExcels(new ArrayList<XoolibeutFeuilleExcel>());
 		File[] files = fileFolder.listFiles();
 		for (File file : files) {
-			if (file.isFile()) {
+
+			if (file.isFile() && file.getName().endsWith(".pdf")) {
+
 				Date startDateFile = null;
 				XoolibeutFeuilleExcel xoolibeutFormatExcel = new XoolibeutFeuilleExcel();
 				List<XoolibeutLine> xoolibeutLines = new ArrayList<XoolibeutLine>();
@@ -78,7 +99,7 @@ public class XoolibeutClassificationRB {
 					// Extract content of each page
 					String contentOfPage = PdfTextExtractor.getTextFromPage(reader, i);
 					String lines[] = contentOfPage.split("\\r?\\n");
-					System.out.println(lines.length);
+					// System.out.println(lines.length);
 					for (int k = 0; k < lines.length; k++) {
 						boolean verifLine = false;
 						String currentOperationMatch = "";
@@ -90,11 +111,18 @@ public class XoolibeutClassificationRB {
 												.startsWith(ExtractDebit.IDENTIFICATION_RETRAIT_DIVERS_RETRAIT))) {
 									if (!operation.equals(ExtractDebit.VIR_SEPA)
 											|| !lines[k].contains(ExtractDebit.MOT_EXCLU_VIR_SEPA_GAYE)) {
+
 										verifLine = true;
 										currentOperationMatch = operation;
 										break;
+
 									}
 								}
+							}
+						}
+						if (currentOperationMatch.equals(ExtractDebit.PAIEMENT)) {
+							if (lines[k].contains(ExtractDebit.MOT_EXCLU_REMBOURSEMENT)) {
+								verifLine = false;
 							}
 						}
 						if (verifLine) {
@@ -127,13 +155,13 @@ public class XoolibeutClassificationRB {
 							default:
 
 							}
-							System.out.println(lines[k]);
+							// System.out.println(lines[k]);
 							String[] arrayLine = lines[k].trim().split(" ");
 							List<String> listeElement = new ArrayList<String>(4);
 							if (isFirstLine) {
 								isFirstLine = false;
 							}
-
+							// System.out.println("classification " + classification);
 							if (startDateFile != null) {
 								if (startDateFile.compareTo(buildDate(arrayLine[0])) > 0) {
 									startDateFile = buildDate(arrayLine[0]);
@@ -178,8 +206,7 @@ public class XoolibeutClassificationRB {
 									System.out.println("not number " + listeElement.get(3));
 								}
 							}
-							// System.out.println(String.join(";", listeElement));
-							contentOut = contentOut + String.join(";", listeElement) + "\n\n";
+
 							XoolibeutLine xoolibeutLine = new XoolibeutLine();
 							xoolibeutLine.setColumnA(listeElement.get(0));
 							xoolibeutLine.setColumnB(listeElement.get(1));
@@ -192,7 +219,6 @@ public class XoolibeutClassificationRB {
 						}
 					}
 
-					// System.out.println(contentOfPage);
 				}
 				reader.close();
 				if (!xoolibeutLines.isEmpty()) {
@@ -212,27 +238,8 @@ public class XoolibeutClassificationRB {
 		}
 
 		if (!isFirstLine) {
-			/*
-			 * DateFormat sourceFormat = new SimpleDateFormat("dd/MM/yyyy"); String
-			 * ouputFileName = "Depense_du_"; Date dateStart =
-			 * sourceFormat.parse(startDate); Date dateEnd = sourceFormat.parse(endDate);
-			 * Calendar calendar = Calendar.getInstance(); calendar.setTime(dateStart);
-			 * String month = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG,
-			 * Locale.getDefault()); System.out.println(month); ouputFileName =
-			 * ouputFileName + calendar.get(Calendar.DAY_OF_MONTH) + "_" + month + "_" +
-			 * calendar.get(Calendar.YEAR); calendar.setTime(dateEnd); month =
-			 * calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
-			 * ouputFileName = ouputFileName + "_au_" + calendar.get(Calendar.DAY_OF_MONTH)
-			 * + "_" + month + "_" + calendar.get(Calendar.YEAR) + ".csv";
-			 * System.out.println(ouputFileName);
-			 * 
-			 * System.out.println(startDate); System.out.println(endDate); FileWriter fw =
-			 * new FileWriter(fileFolderDest.getAbsolutePath() + File.separator +
-			 * ouputFileName); contentOut = contentOut + "\n\n" + ";;Total Dépense : ;" +
-			 * formatDouble(total); fw.write(contentOut); fw.close();
-			 */
 
-			String fileName = fileFolderDest.getAbsolutePath() + File.separator + "CLASSEUR_"
+			String fileName = fileFolderDest.getAbsolutePath() + File.separator + "DEPENSE_"
 					+ buildNameByEndDate(startDate) + "_AU_" + buildNameByEndDate(endDate) + ".xlsx";
 			XoolibeutCreateFileExcel.createClasseurExcel(xoolibeutClasseurExcel, fileName);
 
@@ -253,7 +260,7 @@ public class XoolibeutClassificationRB {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(dateSt);
 		String month = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
-		System.out.println(month);
+		// System.out.println(month);
 		return calendar.get(Calendar.DAY_OF_MONTH) + "_" + month + "_" + calendar.get(Calendar.YEAR);
 	}
 
@@ -357,7 +364,8 @@ public class XoolibeutClassificationRB {
 				|| contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_ENERGIE_ENGIE_HOME)) {
 			return ExtractDebit.NATURE_DEPENSE_EAU_ELEC_GAZ;
 		}
-		if (contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_ENERGIE_TOTALENERGIES)) {
+		if (contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_ENERGIE_TOTALENERGIES)
+				|| contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_ENERGIE_TRES_NANTES_MUNICIP)) {
 			return ExtractDebit.NATURE_DEPENSE_EAU_ELEC_GAZ;
 		}
 		if (contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_IMPOT_FINANCE_PUBLIQUE)) {
@@ -383,12 +391,16 @@ public class XoolibeutClassificationRB {
 				|| contentLine.contains(ExtractDebit.IDENTIFICATION_VIR_SEPA_ASS_MAT_PAIE)) {
 			return ExtractDebit.NATURE_DEPENSE_ASS_MAT;
 		}
+		if (contentLine.contains(ExtractDebit.IDENTIFICATION_VIR_SEPA_ASS_MAT_QUEAU)) {
+			return ExtractDebit.NATURE_DEPENSE_ASS_MAT;
+		}
 		if (contentLine.contains(ExtractDebit.IDENTIFICATION_VIR_SEPA_ENERGIE_PAIE_EAU)) {
 			return ExtractDebit.NATURE_DEPENSE_EAU_ELEC_GAZ;
 		}
 		if (contentLine.contains(ExtractDebit.IDENTIFICATION_VIR_SEPA_RESTAU_SORTI_CSE)) {
 			return ExtractDebit.NATURE_DEPENSE_RESTAU_SORTI;
 		}
+
 		return ExtractDebit.NATURE_DEPENSE_DIVERS;
 	}
 

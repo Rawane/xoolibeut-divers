@@ -233,23 +233,34 @@ public class XoolibeutCreateFileExcel {
 		for (XoolibeutFeuilleExcel xoolibeutFeuilleExcel : listFeuille) {
 			row = sheetResume.getRow(2 + compteMonth);
 			if (row == null) {
-				row = sheetResume.createRow(6 + compteMonth);
+				row = sheetResume.createRow(2 + compteMonth);
 			}
-			System.out.println("Compteur " + compteMonth);
+			//System.out.println("Compteur " + compteMonth);
 			cell = row.createCell(3, CellType.STRING);
 			cell.setCellValue(
 					xoolibeutFeuilleExcel.getName().substring(0, xoolibeutFeuilleExcel.getName().indexOf("_")));
 			cell = row.createCell(4, CellType.FORMULA);
 			formula = xoolibeutFeuilleExcel.getName() + "!D2";
 			cell.setCellFormula(formula);
-
 			cell = row.createCell(5, CellType.FORMULA);
 			formula = xoolibeutFeuilleExcel.getName() + "!D4";
 			cell.setCellFormula(formula);
 			compteMonth++;
-
 		}
-
+		compteMonth++;		
+		row = sheetResume.getRow(2 + compteMonth);
+		if (row == null) {
+			row = sheetResume.createRow(2 + compteMonth);
+		}
+		cell = row.createCell(3, CellType.STRING);
+		cell.setCellValue("Moyenne par Mois");
+		cell = row.createCell(4, CellType.FORMULA);
+		formula ="SUM(E3:E"+(listFeuille.size()+3)+")/"+listFeuille.size();
+		cell.setCellFormula(formula);
+		cell = row.createCell(5, CellType.FORMULA);
+		formula ="SUM(F3:F"+(listFeuille.size()+3)+")/"+listFeuille.size();
+		cell.setCellFormula(formula);
+		
 		File file = new File(fileName);
 		FileOutputStream outFile = new FileOutputStream(file);
 		workbook.write(outFile);
