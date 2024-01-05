@@ -36,7 +36,7 @@ public class XoolibeutExtractLibelleOperationRB {
 			
 			generateCSVFromPDFTypeOperation(compte_rg, ExtractDebit.IDENTIFICATION_CB_COURSE_CARREFOUR, true, libelleIn, ExtractDebit.PAIEMENT,
 					ExtractDebit.PRLV, ExtractDebit.VIR_SEPA,ExtractDebit.IDENTIFICATION_ASSURANCE_TRANSPORT_HABITAT,ExtractDebit.IDENTIFICATION_ASSURANCE_TRANSPORT_PLANS_PREV,
-					ExtractDebit.IDENTIFICATION_RETRAIT_DIVERS_RETRAIT);
+					ExtractDebit.IDENTIFICATION_RETRAIT_DIVERS_RETRAIT,ExtractDebit.IDENTIFICATION_FRAIS_INTERVENTION);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

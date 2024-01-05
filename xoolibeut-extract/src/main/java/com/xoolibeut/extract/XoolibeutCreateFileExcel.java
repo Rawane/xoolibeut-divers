@@ -38,7 +38,13 @@ public class XoolibeutCreateFileExcel {
 		sheetResume.setColumnWidth(5, 25 * 256);
 		List<XoolibeutFeuilleExcel> listFeuille = classeurExcel.getFeuilleExcels();
 		for (XoolibeutFeuilleExcel xoolibeutFeuilleExcel : listFeuille) {
-			HSSFSheet sheet = workbook.createSheet(xoolibeutFeuilleExcel.getName());
+			String name=xoolibeutFeuilleExcel.getName();
+			if(workbook.getSheet(name)!=null) {
+				name=name+"_bis";
+				
+			}
+			
+			HSSFSheet sheet = workbook.createSheet(name);
 			// sheet.autoSizeColumn(0);
 			sheet.setColumnWidth(0, 30 * 256);
 			sheet.setColumnWidth(1, 15 * 256);
@@ -92,6 +98,10 @@ public class XoolibeutCreateFileExcel {
 			Row rowExtra = sheet.createRow(rownum);
 			rownum++;
 			Row rowSante = sheet.createRow(rownum);
+			rownum++;
+			Row rowEnvoieSenegal = sheet.createRow(rownum);
+			rownum++;
+			Row rowFraisCommission = sheet.createRow(rownum);
 
 			int startTabIndex = rownum + 2;
 
@@ -148,6 +158,8 @@ public class XoolibeutCreateFileExcel {
 			updateCell(ExtractDebit.NATURE_DEPENSE_CHARGES_COPRO, rowChargeCorpro, startTabIndex, rownum);
 			updateCell(ExtractDebit.NATURE_DEPENSE_EXTRA, rowExtra, startTabIndex, rownum);
 			updateCell(ExtractDebit.NATURE_DEPENSE_SANTE, rowSante, startTabIndex, rownum);
+			updateCell(ExtractDebit.NATURE_DEPENSE_ENVOIE_SENEGAL, rowEnvoieSenegal, startTabIndex, rownum);
+			updateCell(ExtractDebit.NATURE_DEPENSE_FRAIS_COMISSION, rowFraisCommission, startTabIndex, rownum);
 
 			formula = "SUM(D6:D20)";
 			cell = rowTotalWithoutSEtEx.createCell(0, CellType.STRING);
@@ -220,6 +232,10 @@ public class XoolibeutCreateFileExcel {
 				formulaResume.replace("@NUM@", "D21"));
 		rowResume = createCellResume(ExtractDebit.NATURE_DEPENSE_SANTE, sheetResume, rowResume,
 				formulaResume.replace("@NUM@", "D22"));
+		rowResume = createCellResume(ExtractDebit.NATURE_DEPENSE_ENVOIE_SENEGAL, sheetResume, rowResume,
+				formulaResume.replace("@NUM@", "D23"));
+		rowResume = createCellResume(ExtractDebit.NATURE_DEPENSE_FRAIS_COMISSION, sheetResume, rowResume,
+				formulaResume.replace("@NUM@", "D24"));
 
 		int compteMonth = 0;
 		Row row = sheetResume.getRow(1);

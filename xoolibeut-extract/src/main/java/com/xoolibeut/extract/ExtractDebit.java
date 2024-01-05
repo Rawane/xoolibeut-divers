@@ -17,14 +17,24 @@ public class ExtractDebit {
 	public final static String IDENTIFICATION_CB_COURSE_LECLERC = "LECLERC";
 	public final static String IDENTIFICATION_CB_COURSE_LIDL = "LIDL";
 	public final static String IDENTIFICATION_PRLV_COURSE_CARREFOUR = "CARREFOUR";
+	public final static String IDENTIFICATION_CB_COURSE_INTERMARCHE = "INTERMARCHE";
+	public final static String IDENTIFICATION_CB_DIVERTISSEMENT_COMITEO = "COMITEO";
+	
 	public final static String IDENTIFICATION_CB_COURSE_NESPRESSO = "NESPRESSO";
 	public final static String IDENTIFICATION_CB_COURSE_BOUFFAY_LE_13 = "BOUFFAY LE 13";
 	public final static String IDENTIFICATION_CB_EXTRA_WESTERN_UNION = "WESTERN";
 	public final static String IDENTIFICATION_CB_COMMERCE_ALIEXPRES = "ALIEXPRESS";
-
+	public final static String IDENTIFICATION_CB_COMMERCE_PAYPAL = "PAYPAL";
+	public final static String IDENTIFICATION_CB_COMMERCE_COTIZUP="COTIZUP";
+	public final static String IDENTIFICATION_CB_COMMERCE_TEMU = "TEMU";
+	public final static String IDENTIFICATION_CB_SANTE_MEDECIN_ANAIS_GONZALEZ = "GONZALEZ";
+	public final static String IDENTIFICATION_CB_SANTE_MEDECIN_COMBY="DR COMBY";
 	public final static String IDENTIFICATION_CB_SANTE_MEDECIN_FARCY_CORRINE = "CORINE";
 	public final static String IDENTIFICATION_CB_SANTE_MEDECIN_KATELL_THOMAS = "KATELL";
+	
+	public final static String IDENTIFICATION_CB_SANTE_MEDECIN_PEROZ="PEROZ";
 	public final static String IDENTIFICATION_CB_PHARMACIE = "PHARM";
+	
 
 	public final static String IDENTIFICATION_CB_DIVERS_AMAZON = "AMAZON";
 	public final static String IDENTIFICATION_RETRAIT_DIVERS_RETRAIT = "RETRAIT";
@@ -35,6 +45,8 @@ public class ExtractDebit {
 	public final static String IDENTIFICATION_PRLV_ENERGIE_TRES_NANTES_MUNICIP = "TRES. NANTES MUNICIP";
 	public final static String IDENTIFICATION_PRLV_ENERGIE_ENGIE = "ENGIE";
 	public final static String IDENTIFICATION_PRLV_ENERGIE_ENGIE_HOME = "ENGIE HOME";
+	public final static String IDENTIFICATION_PRLV_CSE_URSSAF ="SEPA URSSAF";
+
 
 	public final static String IDENTIFICATION_CB_ASSURANCE_TRANSPORT_CARTER_CASH = "CARTER-CASH";
 	public final static String IDENTIFICATION_ASSURANCE_TRANSPORT_PLANS_PREV = "PLANS PREV.";
@@ -43,22 +55,31 @@ public class ExtractDebit {
 	public final static String IDENTIFICATION_CB_ASSURANCE_TRANSPORT_SECURITEST = "SECURITEST";
 	public final static String IDENTIFICATION_CB_ASSURANCE_TRANSPORT_COFIROUTE = "COFIROUTE";
 	public final static String IDENTIFICATION_PRLV_ASSURANCE_TRANSPORT_SEMITAN = "SEMITAN";
+	public final static String IDENTIFICATION_CB_ASSURANCE_TRANSPORT_GARAGE_RECYCLE_AUTO = "ATLANTIC RECYCL\"";
+	
+	
+	public final static String IDENTIFICATION_FRAIS_INTERVENTION="COMMISSION";
 
 	public final static String IDENTIFICATION_PRLV_INTERNET_FREE_MOBILE = "FREE MOBILE";
+	public final static String IDENTIFICATION_PRLV_INTERNET_BOUYGUES = "BOUYGUES";
 	public final static String IDENTIFICATION_PRLV_INTERNET_FREE_FIXE = "FREE TELECOM";
 	public final static String IDENTIFICATION_PRLV_INTERNET_PRIXTEL = "PRIXTEL";
 	public final static String IDENTIFICATION_PRLV_INTERNET_EURO_INFORMATION = "EURO-INFORMATION";
 	public final static String IDENTIFICATION_PRLV_INTERNET_EI_TELECOM = "EI TELECOM";
+	public final static String IDENTIFICATION_PRLV_INTERNET_YOUPRICE = "YOUPRICE";
 
 	public final static String IDENTIFICATION_CB_CHARGE_COPRIETAIRES_CABINET_THIERRY = "CABINET THIERRY";
 	public final static String IDENTIFICATION_CB_SPORT_DECATHLON = "DECATHLON";
+	public final static String IDENTIFICATION_CB_SPORT_HELLOASSO = "HELLOASSO";
 	public final static String IDENTIFICATION_SPORT_CHEQUE = "CHEQUE";
 	public final static String IDENTIFICATION_CB_RESTAU_SORTI_KFC = "KFC";
 	public final static String IDENTIFICATION_CB_RESTAU_SORTI_MCDONALD = "MCDO";
 	public final static String IDENTIFICATION_CB_RESTAU_SORTI_BURGER_KING = "BURGER KING";
+	public final static String IDENTIFICATION_CB_RESTAU_SORTI_VACANCE_SARZEAU="SARZEAU";
 	public final static String IDENTIFICATION_VIR_SEPA_RESTAU_SORTI_CSE = "CSE";
 	public final static String IDENTIFICATION_CB_RESTAU_SORTI_ASKALE = "ASKALE";
 	public final static String IDENTIFICATION_CB_RESTAU_SORTI_PITAYA = "PITAYA";
+	public final static String IDENTIFICATION_CB_RESTAU = "RESTAU";
 
 	public final static String IDENTIFICATION_CB_BOULANGERIE_DOUCEUR = "DOUCEURS";
 	public final static String IDENTIFICATION_CB_BOULANGERIE = "BOULANGERIE";
@@ -71,11 +92,18 @@ public class ExtractDebit {
 
 	public final static String IDENTIFICATION_CB_MODE_BEAUTE_SEPHORA = "SEPHORA";
 	public final static String IDENTIFICATION_VIR_SEPA_ASS_MAT = "ASS";
+	public final static String IDENTIFICATION_VIR_SEPA_SYNDIC = "SYNDIC";
+	public final static String IDENTIFICATION_VIR_SEPA_CHARGES = "CHARGES";
+	public final static String IDENTIFICATION_VIR_SEPA_LEOPOLD = "LEOPOLD";
+	
 	public final static String IDENTIFICATION_VIR_SEPA_ASS_MAT_PAIE = "PAIE"; 
 	public final static String IDENTIFICATION_VIR_SEPA_ASS_MAT_QUEAU = "QUEAU";
+	public final static String IDENTIFICATION_VIR_SEPA_ASS_MAT_SALAIRE = "SALAIRE";
 
 	public final static String IDENTIFICATION_PRLV_CANTINE_UNIQUE_TH = "UNIQUE TH";
 	public final static String IDENTIFICATION_PRLV_IMPOT_FINANCE_PUBLIQUE = "FINANCES PUBLIQUES";
+	public final static String IDENTIFICATION_PRLV_IMPOT_SGC_SAINT_HERBLAIN = "SAINT-HERBLAIN";
+	
 
 	// classer les achats
 	// DAT
@@ -113,5 +141,9 @@ public class ExtractDebit {
 	public final static String NATURE_DEPENSE_SANTE = "Santé";
 	// DTA
 	public final static String NATURE_DEPENSE_TABAC = "tabac presse";
+	//DES
+	public final static String NATURE_DEPENSE_ENVOIE_SENEGAL = "envoie sénégal";
+	//DFC
+	public final static String NATURE_DEPENSE_FRAIS_COMISSION = "frais commission";
 
 }

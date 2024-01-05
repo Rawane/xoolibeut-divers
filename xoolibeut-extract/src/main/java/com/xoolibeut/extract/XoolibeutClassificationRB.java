@@ -44,20 +44,20 @@ public class XoolibeutClassificationRB {
 							ExtractDebit.IDENTIFICATION_ASSURANCE_TRANSPORT_HABITAT,
 							ExtractDebit.IDENTIFICATION_ASSURANCE_TRANSPORT_PLANS_PREV,
 							ExtractDebit.IDENTIFICATION_RETRAIT_DIVERS_RETRAIT,
-							ExtractDebit.IDENTIFICATION_SPORT_CHEQUE);
+							ExtractDebit.IDENTIFICATION_SPORT_CHEQUE,ExtractDebit.IDENTIFICATION_FRAIS_INTERVENTION);
 				}
 			}
 
-			fileFolder = new File(compte_fg);
-			files = fileFolder.listFiles();
-			for (File file : files) {
+			File fileFolderCF = new File(compte_fg);
+			File[]	filesCF = fileFolderCF.listFiles();
+			for (File file : filesCF) {
 				if (file.isDirectory()) {
 					generateCSVFromPDFTypeOperation(file.getAbsolutePath(), "depenses", ExtractDebit.PAIEMENT,
 							ExtractDebit.PRLV, ExtractDebit.VIR_SEPA,
 							ExtractDebit.IDENTIFICATION_ASSURANCE_TRANSPORT_HABITAT,
 							ExtractDebit.IDENTIFICATION_ASSURANCE_TRANSPORT_PLANS_PREV,
 							ExtractDebit.IDENTIFICATION_RETRAIT_DIVERS_RETRAIT,
-							ExtractDebit.IDENTIFICATION_SPORT_CHEQUE);
+							ExtractDebit.IDENTIFICATION_SPORT_CHEQUE,ExtractDebit.IDENTIFICATION_FRAIS_INTERVENTION);
 				}
 			}
 
@@ -67,7 +67,7 @@ public class XoolibeutClassificationRB {
 
 	}
 
-	public static void generateCSVFromPDFTypeOperation(String folder, String destination, String... typeOperation)
+	private static void generateCSVFromPDFTypeOperation(String folder, String destination, String... typeOperation)
 			throws IOException, ParseException {
 		System.out.println(folder);
 		File fileFolder = new File(folder);
@@ -125,6 +125,23 @@ public class XoolibeutClassificationRB {
 								verifLine = false;
 							}
 						}
+						
+						//ON vérifie format de Ligne 
+						if(verifLine) {
+						String[] arrayLineCheck = lines[k].trim().split(" ");
+						if(arrayLineCheck.length<3) {
+							verifLine=false;	
+						}else {
+							try {
+							buildDate(arrayLineCheck[0]);
+							buildDate(arrayLineCheck[1]);
+							}catch (Exception e) {
+								verifLine=false;
+								//e.printStackTrace();
+							}
+						}
+						
+						}
 						String complementAchat="";
 						if (verifLine) {
 							switch (currentOperationMatch) {
@@ -154,7 +171,13 @@ public class XoolibeutClassificationRB {
 							case ExtractDebit.IDENTIFICATION_SPORT_CHEQUE:
 								classification = ExtractDebit.NATURE_DEPENSE_SPORT;
 								break;
+							case ExtractDebit.IDENTIFICATION_FRAIS_INTERVENTION:
+								classification = ExtractDebit.NATURE_DEPENSE_FRAIS_COMISSION;
+								break;								
 							default:
+							if(currentOperationMatch.contains(ExtractDebit.IDENTIFICATION_FRAIS_INTERVENTION)) {
+								classification = ExtractDebit.NATURE_DEPENSE_FRAIS_COMISSION;
+							}	
 
 							}
 							// System.out.println(lines[k]);
@@ -164,27 +187,29 @@ public class XoolibeutClassificationRB {
 								isFirstLine = false;
 							}
 							// System.out.println("classification " + classification);
+							
+							String dateFromFile=arrayLine[1];
 							if (startDateFile != null) {
-								if (startDateFile.compareTo(buildDate(arrayLine[0])) > 0) {
-									startDateFile = buildDate(arrayLine[0]);
+								if (startDateFile.compareTo(buildDate(dateFromFile)) > 0) {
+									startDateFile = buildDate(dateFromFile);
 								}
 							} else {
-								startDateFile = buildDate(arrayLine[0]);
+								startDateFile = buildDate(dateFromFile);
 							}
 
 							if (startDate != null) {
-								if (startDate.compareTo(buildDate(arrayLine[0])) > 0) {
-									startDate = buildDate(arrayLine[0]);
+								if (startDate.compareTo(buildDate(dateFromFile)) > 0) {
+									startDate = buildDate(dateFromFile);
 								}
 							} else {
-								startDate = buildDate(arrayLine[0]);
+								startDate = buildDate(dateFromFile);
 							}
 							if (endDate != null) {
-								if (endDate.compareTo(buildDate(arrayLine[0])) < 0) {
-									endDate = buildDate(arrayLine[0]);
+								if (endDate.compareTo(buildDate(dateFromFile)) < 0) {
+									endDate = buildDate(dateFromFile);
 								}
 							} else {
-								endDate = buildDate(arrayLine[0]);
+								endDate = buildDate(dateFromFile);
 							}
 
 							if (arrayLine.length > 3) {
@@ -225,7 +250,17 @@ public class XoolibeutClassificationRB {
 				reader.close();
 				if (!xoolibeutLines.isEmpty()) {
 					xoolibeutClasseurExcel.getFeuilleExcels().add(xoolibeutFormatExcel);
-					xoolibeutFormatExcel.setName(buildFileNameMonthYear(startDateFile));
+					Calendar calendarStartDate=Calendar.getInstance();
+					calendarStartDate.setTime(startDateFile);
+					Calendar calendarEndDate=Calendar.getInstance();
+					calendarEndDate.setTime(endDate);
+		 //Correction Date 
+					if(calendarStartDate.get(Calendar.MONTH)!=calendarEndDate.get(Calendar.MONTH) && calendarStartDate.get(Calendar.DAY_OF_MONTH)> 15) {
+						
+						calendarStartDate.set(Calendar.MONTH, calendarEndDate.get(Calendar.MONTH));
+						calendarStartDate.set(Calendar.DAY_OF_MONTH, 1);
+					}
+					xoolibeutFormatExcel.setName(buildFileNameMonthYear(calendarStartDate.getTime()));
 					xoolibeutFormatExcel.setStartDate(startDateFile);
 					xoolibeutFormatExcel.setEndDate(endDate);
 					Collections.sort(xoolibeutFormatExcel.getLines(), new Comparator<XoolibeutLine>() {
@@ -240,15 +275,25 @@ public class XoolibeutClassificationRB {
 		}
 
 		if (!isFirstLine) {
-
+			Calendar calendarStartDate=Calendar.getInstance();
+			calendarStartDate.setTime(startDate);
+			Calendar calendarEndDate=Calendar.getInstance();
+			calendarEndDate.setTime(endDate);
+ //Correction Date 
+			if(calendarStartDate.get(Calendar.MONTH)!=calendarEndDate.get(Calendar.MONTH) && calendarStartDate.get(Calendar.DAY_OF_MONTH)> 15) {
+				
+				calendarStartDate.set(Calendar.MONTH, calendarEndDate.get(Calendar.MONTH));
+				calendarStartDate.set(Calendar.DAY_OF_MONTH, 1);
+			}
 			String fileName = fileFolderDest.getAbsolutePath() + File.separator + "DEPENSE_"
-					+ buildNameByEndDate(startDate) + "_AU_" + buildNameByEndDate(endDate) + ".xlsx";
+					+ buildNameByEndDate(calendarStartDate.getTime()) + "_AU_" + buildNameByEndDate(endDate) + ".xlsx";
 			XoolibeutCreateFileExcel.createClasseurExcel(xoolibeutClasseurExcel, fileName);
 
 		} else {
 			System.out.println("Aucune extraction  ");
 
 		}
+		
 	}
 
 	private static String buildFileNameMonthYear(Date dateSt) throws ParseException {
@@ -277,7 +322,7 @@ public class XoolibeutClassificationRB {
 
 	private static String determineClassicationModePaiementCB(String contentLine) {
 		if (contentLine.contains(ExtractDebit.IDENTIFICATION_CB_COURSE_CARREFOUR)
-				|| contentLine.contains(ExtractDebit.IDENTIFICATION_CB_COURSE_LECLERC)) {
+				|| contentLine.contains(ExtractDebit.IDENTIFICATION_CB_COURSE_LECLERC) ||  contentLine.contains(ExtractDebit.IDENTIFICATION_CB_COURSE_INTERMARCHE)) {
 			return ExtractDebit.NATURE_DEPENSE_COURSE;
 		}
 		if (contentLine.contains(ExtractDebit.IDENTIFICATION_CB_COURSE_LIDL)
@@ -296,7 +341,7 @@ public class XoolibeutClassificationRB {
 				|| contentLine.contains(ExtractDebit.IDENTIFICATION_CB_RESTAU_SORTI_MCDONALD)) {
 			return ExtractDebit.NATURE_DEPENSE_RESTAU_SORTI;
 		}
-		if (contentLine.contains(ExtractDebit.IDENTIFICATION_CB_RESTAU_SORTI_PITAYA)) {
+		if (contentLine.contains(ExtractDebit.IDENTIFICATION_CB_RESTAU_SORTI_PITAYA) || contentLine.contains(ExtractDebit.IDENTIFICATION_CB_RESTAU) || contentLine.contains(ExtractDebit.IDENTIFICATION_CB_DIVERTISSEMENT_COMITEO)) {
 			return ExtractDebit.NATURE_DEPENSE_RESTAU_SORTI;
 		}
 
@@ -316,17 +361,21 @@ public class XoolibeutClassificationRB {
 				|| contentLine.contains(ExtractDebit.IDENTIFICATION_CB_ASSURANCE_TRANSPORT_COFIROUTE)) {
 			return ExtractDebit.NATURE_DEPENSE_ASSURANCE_TRANSPORT;
 		}
-		if (contentLine.contains(ExtractDebit.IDENTIFICATION_CB_ASSURANCE_TRANSPORT_CARTER_CASH)) {
+		if (contentLine.contains(ExtractDebit.IDENTIFICATION_CB_ASSURANCE_TRANSPORT_CARTER_CASH) || contentLine.contains(ExtractDebit.IDENTIFICATION_CB_ASSURANCE_TRANSPORT_GARAGE_RECYCLE_AUTO)) {
 			return ExtractDebit.NATURE_DEPENSE_ASSURANCE_TRANSPORT;
 		}
 		if (contentLine.contains(ExtractDebit.IDENTIFICATION_CB_CHARGE_COPRIETAIRES_CABINET_THIERRY)) {
 			return ExtractDebit.NATURE_DEPENSE_CHARGES_COPRO;
 		}
-		if (contentLine.contains(ExtractDebit.IDENTIFICATION_CB_COMMERCE_ALIEXPRES)) {
+		if (contentLine.contains(ExtractDebit.IDENTIFICATION_CB_COMMERCE_ALIEXPRES) || contentLine.contains(ExtractDebit.IDENTIFICATION_CB_COMMERCE_PAYPAL) || contentLine.contains(ExtractDebit.IDENTIFICATION_CB_COMMERCE_TEMU)) {
+			return ExtractDebit.NATURE_DEPENSE_EXTRA;
+		}
+		
+		if (contentLine.contains(ExtractDebit.IDENTIFICATION_CB_COMMERCE_COTIZUP)) {
 			return ExtractDebit.NATURE_DEPENSE_EXTRA;
 		}
 		if (contentLine.contains(ExtractDebit.IDENTIFICATION_CB_EXTRA_WESTERN_UNION)) {
-			return ExtractDebit.NATURE_DEPENSE_EXTRA;
+			return ExtractDebit.NATURE_DEPENSE_ENVOIE_SENEGAL;
 		}
 		if (contentLine.contains(ExtractDebit.IDENTIFICATION_CB_DIVERS_AMAZON)) {
 			return ExtractDebit.NATURE_DEPENSE_DIVERS;
@@ -335,13 +384,16 @@ public class XoolibeutClassificationRB {
 			return ExtractDebit.NATURE_DEPENSE_MEUBLE_JARDIN;
 		}
 		if (contentLine.contains(ExtractDebit.IDENTIFICATION_CB_SANTE_MEDECIN_FARCY_CORRINE)
-				|| contentLine.contains(ExtractDebit.IDENTIFICATION_CB_SANTE_MEDECIN_KATELL_THOMAS)) {
+				|| contentLine.contains(ExtractDebit.IDENTIFICATION_CB_SANTE_MEDECIN_KATELL_THOMAS) || contentLine.contains(ExtractDebit.IDENTIFICATION_CB_SANTE_MEDECIN_ANAIS_GONZALEZ)) {
+			return ExtractDebit.NATURE_DEPENSE_SANTE;
+		}
+		if (contentLine.contains(ExtractDebit.IDENTIFICATION_CB_SANTE_MEDECIN_COMBY) || contentLine.contains(ExtractDebit.IDENTIFICATION_CB_SANTE_MEDECIN_PEROZ)) {
 			return ExtractDebit.NATURE_DEPENSE_SANTE;
 		}
 		if (contentLine.contains(ExtractDebit.IDENTIFICATION_CB_PHARMACIE)) {
 			return ExtractDebit.NATURE_DEPENSE_PHARMACIE;
 		}
-		if (contentLine.contains(ExtractDebit.IDENTIFICATION_CB_SPORT_DECATHLON)) {
+		if (contentLine.contains(ExtractDebit.IDENTIFICATION_CB_SPORT_DECATHLON) || contentLine.contains(ExtractDebit.IDENTIFICATION_CB_SPORT_HELLOASSO)) {
 			return ExtractDebit.NATURE_DEPENSE_SPORT;
 		}
 		if (contentLine.contains(ExtractDebit.IDENTIFICATION_CB_TABAC_TABAC_PRESSE)) {
@@ -359,12 +411,16 @@ public class XoolibeutClassificationRB {
 				|| contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_ASSURANCE_TRANSPORT_SEMITAN)) {
 			return ExtractDebit.NATURE_DEPENSE_ASSURANCE_TRANSPORT;
 		}
-		if (contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_CANTINE_UNIQUE_TH)) {
+		if (contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_CANTINE_UNIQUE_TH) || contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_IMPOT_SGC_SAINT_HERBLAIN)) {
 			return ExtractDebit.NATURE_DEPENSE_CANTINE;
 		}
 		if (contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_ENERGIE_ENGIE)
 				|| contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_ENERGIE_ENGIE_HOME)) {
 			return ExtractDebit.NATURE_DEPENSE_EAU_ELEC_GAZ;
+		}
+		if (contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_CSE_URSSAF)
+				) {
+			return ExtractDebit.NATURE_DEPENSE_RESTAU_SORTI;
 		}
 		if (contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_ENERGIE_TOTALENERGIES)
 				|| contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_ENERGIE_TRES_NANTES_MUNICIP)) {
@@ -378,10 +434,10 @@ public class XoolibeutClassificationRB {
 			return ExtractDebit.NATURE_DEPENSE_INTERNET_TELEPHONIE;
 		}
 		if (contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_INTERNET_FREE_MOBILE)
-				|| contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_INTERNET_PRIXTEL)) {
+				|| contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_INTERNET_PRIXTEL) || contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_INTERNET_BOUYGUES)) {
 			return ExtractDebit.NATURE_DEPENSE_INTERNET_TELEPHONIE;
 		}
-		if (contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_INTERNET_EI_TELECOM)) {
+		if (contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_INTERNET_EI_TELECOM) || contentLine.contains(ExtractDebit.IDENTIFICATION_PRLV_INTERNET_YOUPRICE)) {
 			return ExtractDebit.NATURE_DEPENSE_INTERNET_TELEPHONIE;
 		}
 
@@ -390,7 +446,7 @@ public class XoolibeutClassificationRB {
 
 	private static String determineClassicationModeVirementSepa(String contentLine) {
 		if (contentLine.contains(ExtractDebit.IDENTIFICATION_VIR_SEPA_ASS_MAT)
-				|| contentLine.contains(ExtractDebit.IDENTIFICATION_VIR_SEPA_ASS_MAT_PAIE)) {
+				|| contentLine.contains(ExtractDebit.IDENTIFICATION_VIR_SEPA_ASS_MAT_PAIE) || contentLine.contains(ExtractDebit.IDENTIFICATION_VIR_SEPA_ASS_MAT_SALAIRE)) {
 			return ExtractDebit.NATURE_DEPENSE_ASS_MAT;
 		}
 		if (contentLine.contains(ExtractDebit.IDENTIFICATION_VIR_SEPA_ASS_MAT_QUEAU)) {
@@ -399,10 +455,14 @@ public class XoolibeutClassificationRB {
 		if (contentLine.contains(ExtractDebit.IDENTIFICATION_VIR_SEPA_ENERGIE_PAIE_EAU)) {
 			return ExtractDebit.NATURE_DEPENSE_EAU_ELEC_GAZ;
 		}
+		
 		if (contentLine.contains(ExtractDebit.IDENTIFICATION_VIR_SEPA_RESTAU_SORTI_CSE)) {
 			return ExtractDebit.NATURE_DEPENSE_RESTAU_SORTI;
 		}
 
+		if (contentLine.contains(ExtractDebit.IDENTIFICATION_VIR_SEPA_SYNDIC) || contentLine.contains(ExtractDebit.IDENTIFICATION_VIR_SEPA_LEOPOLD) || contentLine.contains(ExtractDebit.IDENTIFICATION_VIR_SEPA_CHARGES)) {
+			return ExtractDebit.NATURE_DEPENSE_CHARGES_COPRO;
+		}
 		return ExtractDebit.NATURE_DEPENSE_DIVERS;
 	}
 
